@@ -1,0 +1,40 @@
+name: Build macOS App
+
+on:
+  push:
+    tags:
+      - "v[0-9]*"
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Generate app icon
+        run: |
+          mkdir -p assets/app.iconset
+          for size in 16 32 128 256 512; do
+            sips -z $size $size assets/logo_on.png --out assets/app.iconset/icon_${size}x${size}.png
+            double=$((size * 2))
+            sips -z $double $double assets/logo_on.png --out assets/app.iconset/icon_${size}x${size}@2x.png
+          done
+          sips -z 1024 1024 assets/logo_on.png --out assets/app.iconset/icon_512x512@2x.png
+          iconutil -c icns assets/app.iconset -o assets/app.icns
+          rm -rf assets/app.iconset
+
+      - name: Build app
+        run: uv run pyinstaller caffeinate_ui.spec --noconfirm
+
+      - name: Zip app bundle
+        run: cd dist && zip -r "Caffeinate-UI-${GITHUB_REF_NAME}.zip" "Caffeinate UI.app"
+
+      - name: Upload release artifact
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/Caffeinate-UI-*.zip
