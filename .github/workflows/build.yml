@@ -34,15 +34,6 @@ jobs:
       - name: Build app
         run: uv run pyinstaller caffeinate_ui.spec --noconfirm
 
-      - name: Ad-hoc code sign
-        run: |
-          APP="dist/Caffeinate UI.app"
-          # Sign inside-out: libraries first, then frameworks, then the app
-          find "$APP" \( -name '*.so' -o -name '*.dylib' \) -exec codesign --force --sign - {} +
-          find "$APP/Contents/Frameworks" -name 'Qt*' -not -name '*.prl' -not -name '*.conf' -type f -perm +111 -exec sh -c 'file "$1" | grep -q Mach-O && codesign --force --sign - "$1"' _ {} \;
-          find "$APP/Contents/Frameworks" -name 'Python' -type f -exec codesign --force --sign - {} \;
-          codesign --force --sign - "$APP"
-
       - name: Zip app bundle
         run: cd dist && ditto -c -k --sequesterRsrc --keepParent "Caffeinate UI.app" "Caffeinate-UI-${GITHUB_REF_NAME}.zip"
 
