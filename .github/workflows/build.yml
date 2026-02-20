@@ -44,7 +44,7 @@ jobs:
           codesign --force --sign - "$APP"
 
       - name: Zip app bundle
-        run: cd dist && zip -r "Caffeinate-UI-${GITHUB_REF_NAME}.zip" "Caffeinate UI.app"
+        run: cd dist && ditto -c -k --sequesterRsrc --keepParent "Caffeinate UI.app" "Caffeinate-UI-${GITHUB_REF_NAME}.zip"
 
       - name: Upload release artifact
         uses: softprops/action-gh-release@v2
