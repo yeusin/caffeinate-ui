@@ -26,4 +26,7 @@ app = BUNDLE(
     name="Caffeinate UI.app",
     icon="assets/app.icns",
     bundle_identifier="com.caffeinate-ui.app",
+    info_plist={
+        "LSUIElement": True,
+    },
 )
