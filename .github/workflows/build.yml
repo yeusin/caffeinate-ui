@@ -14,10 +14,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
       - uses: astral-sh/setup-uv@v6
 
       - name: Install dependencies
-        run: uv sync --dev
+        run: uv sync --dev --python "$(which python3)"
+
+      - name: Prepare universal2 dependencies
+        run: uv run python bin/prepare_universal_deps.py
 
       - name: Generate app icon
         run: |
@@ -33,6 +40,12 @@ jobs:
 
       - name: Build app
         run: uv run pyinstaller caffeinate_ui.spec --noconfirm
+
+      - name: Verify universal binary
+        run: |
+          lipo -archs "dist/Caffeinate UI.app/Contents/MacOS/Caffeinate UI" | grep -q "x86_64"
+          lipo -archs "dist/Caffeinate UI.app/Contents/MacOS/Caffeinate UI" | grep -q "arm64"
+          echo "Verified universal2 binary (x86_64 + arm64 present)"
 
       - name: Zip app bundle
         run: cd dist && ditto -c -k --sequesterRsrc --keepParent "Caffeinate UI.app" "Caffeinate-UI-${GITHUB_REF_NAME}.zip"

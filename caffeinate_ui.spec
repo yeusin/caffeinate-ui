@@ -1,3 +1,7 @@
+import sys
+
+target_arch = "universal2" if sys.platform == "darwin" else None
+
 a = Analysis(
     ["caffeinate_ui.py"],
     datas=[("assets", "assets")],
@@ -12,6 +16,7 @@ exe = EXE(
     exclude_binaries=True,
     name="Caffeinate UI",
     console=False,
+    target_arch=target_arch,
 )
 
 coll = COLLECT(

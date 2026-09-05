@@ -14,6 +14,7 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
+    "delocate>=0.13.0",
     "pyinstaller>=6.19.0",
 ]
 
