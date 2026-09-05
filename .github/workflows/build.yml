@@ -30,11 +30,11 @@ jobs:
         run: |
           mkdir -p assets/app.iconset
           for size in 16 32 128 256 512; do
-            sips -z $size $size assets/logo_on.png --out assets/app.iconset/icon_${size}x${size}.png
+            sips -z $size $size assets/app_icon.png --out assets/app.iconset/icon_${size}x${size}.png
             double=$((size * 2))
-            sips -z $double $double assets/logo_on.png --out assets/app.iconset/icon_${size}x${size}@2x.png
+            sips -z $double $double assets/app_icon.png --out assets/app.iconset/icon_${size}x${size}@2x.png
           done
-          sips -z 1024 1024 assets/logo_on.png --out assets/app.iconset/icon_512x512@2x.png
+          sips -z 1024 1024 assets/app_icon.png --out assets/app.iconset/icon_512x512@2x.png
           iconutil -c icns assets/app.iconset -o assets/app.icns
           rm -rf assets/app.iconset
 
